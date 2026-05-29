@@ -1,11 +1,768 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>RadarMyDrive</title>
+  <title>RadarMyDrive – Driver Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.12);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #1f2933;
+      --danger: #f97373;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 55%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 0 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 20% 0, #22c55e, #4f46e5 40%, #0ea5e9 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #e5e7eb;
+      box-shadow: 0 0 24px rgba(79, 70, 229, 0.7);
+    }
+    .brand-text-title {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    nav {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    nav a:hover { color: var(--text); }
+    .btn {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      border: 1px solid var(--accent);
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      box-shadow: none;
+      color: var(--muted);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+      gap: 32px;
+      align-items: center;
+      padding: 16px 0 40px;
+    }
+    .hero-kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .hero-title {
+      font-size: clamp(32px, 5vw, 40px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #22c55e, #a855f7, #0ea5e9);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 460px;
+      margin-bottom: 18px;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .hero-footnote {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .hero-footnote span { color: #22c55e; }
+
+    .hero-card {
+      border-radius: 20px;
+      padding: 18px;
+      background: radial-gradient(circle at top left, #1f2937, #020617 70%);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .hero-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .hero-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+    .hero-metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .metric-trend {
+      font-size: 11px;
+      color: #22c55e;
+    }
+    .metric-trend.down { color: var(--danger); }
+    .hero-chart {
+      margin-top: 6px;
+      height: 70px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(8, 47, 73, 0.4));
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-chart-line {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0, rgba(148, 163, 184, 0.3) 50%, transparent 100%);
+      opacity: 0.4;
+    }
+    .hero-chart-curve {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 80%, rgba(34, 197, 94, 0.8), transparent 55%),
+                  radial-gradient(circle at 45% 30%, rgba(59, 130, 246, 0.9), transparent 55%),
+                  radial-gradient(circle at 80% 60%, rgba(244, 63, 94, 0.9), transparent 55%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
+    .hero-card-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .hero-tag {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+
+    /* Sections */
+    section {
+      padding: 32px 0;
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+    }
+    .section-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 18px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .feature {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+    .feature-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      margin-bottom: 8px;
+      background: var(--accent-soft);
+      color: #c7d2fe;
+    }
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .feature-text {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .card-text {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .pill {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .price-card {
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .price-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+    .price-main {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .price-main span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .price-note {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .price-list {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .price-list li {
+      margin-left: 16px;
+      margin-bottom: 4px;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .faq-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+    .faq-q {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .faq-a {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .cta {
+      text-align: center;
+      padding: 32px 18px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, rgba(79, 70, 229, 0.35), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(129, 140, 248, 0.5);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 1);
+      margin-top: 10px;
+    }
+    .cta-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .cta-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .cta-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cta-footnote {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    footer {
+      padding-top: 28px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+      margin-top: 32px;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: minmax(0, 1fr); }
+      .hero-card { order: -1; }
+      .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pricing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .faq-grid { grid-template-columns: minmax(0, 1fr); }
+      .two-col { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (max-width: 640px) {
+      header { flex-direction: column; align-items: flex-start; }
+      nav { display: none; }
+      .features-grid,
+      .pricing-grid { grid-template-columns: minmax(0, 1fr); }
+      .page { padding-inline: 14px; }
+    }
+  </style>
 </head>
 <body>
-  <h1>RadarMyDrive</h1>
-  <p>Tools and analytics for gig-economy drivers. Site coming soon.</p>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">R</div>
+        <div>
+          <div class="brand-text-title">RadarMyDrive</div>
+          <div class="brand-text-sub">Driver intelligence for the gig economy</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <button class="btn-outline">App is ready to go</button>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div>
+          <div class="hero-kicker">Built for real drivers</div>
+          <h1 class="hero-title">
+            Turn your driving into a <span>data‑driven business.</span>
+          </h1>
+          <p class="hero-sub">
+            RadarMyDrive gives gig‑economy drivers a live view of earnings, miles, and profitability—so every shift is intentional, not guesswork.
+          </p>
+          <div class="hero-badges">
+            <div class="badge">DoorDash · Uber · Instacart · More</div>
+            <div class="badge">Optimize zones, hours, and routes</div>
+          </div>
+          <div class="hero-actions">
+            <button class="btn">Get early access</button>
+            <button class="btn-outline">View sample dashboard</button>
+          </div>
+          <div class="hero-footnote">
+            This app is <span>ready to go</span>—we’re onboarding the first wave of drivers now.
+          </div>
+        </div>
+
+        <aside class="hero-card" aria-label="Sample driver analytics">
+          <div class="hero-card-header">
+            <div>
+              <div class="hero-card-title">Today’s Radar Snapshot</div>
+              <div>Indianapolis · Multi‑app driving</div>
+            </div>
+            <div class="hero-pill">Live · Ready</div>
+          </div>
+          <div class="hero-metric-grid">
+            <div class="metric">
+              <div class="metric-label">Hourly earnings</div>
+              <div class="metric-value">$32.40</div>
+              <div class="metric-trend">+18% vs last week</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Profit per mile</div>
+              <div class="metric-value">$1.42</div>
+              <div class="metric-trend">+0.27 / mi</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Active time</div>
+              <div class="metric-value">4h 12m</div>
+              <div class="metric-trend">High‑efficiency block</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Dead miles</div>
+              <div class="metric-value">9.3 mi</div>
+              <div class="metric-trend down">‑34% wasted distance</div>
+            </div>
+          </div>
+          <div class="hero-chart">
+            <div class="hero-chart-line"></div>
+            <div class="hero-chart-curve"></div>
+          </div>
+          <div class="hero-card-footer">
+            <div>Best zone right now: Fountain Square · Southport</div>
+            <div class="hero-tag">Radar: “Stay online · High demand”</div>
+          </div>
+        </aside>
+      </section>
+
+      <!-- FEATURES -->
+      <section id="features">
+        <div class="section-kicker">Why RadarMyDrive</div>
+        <h2 class="section-title">A control center for your driving income.</h2>
+        <p class="section-sub">
+          RadarMyDrive treats your driving like a business—tracking earnings, miles, and time across apps so you always know what’s actually working.
+        </p>
+
+        <div class="features-grid">
+          <article class="feature">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Real‑time earnings</h3>
+            <p class="feature-text">
+              See hourly rate, daily total, and profit per mile in one place—no more guessing if a shift was “good.”
+            </p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">🗺️</div>
+            <h3 class="feature-title">Zone intelligence</h3>
+            <p class="feature-text">
+              Learn which neighborhoods and time blocks actually pay, based on your own history—not generic advice.
+            </p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">⏱️</div>
+            <h3 class="feature-title">Time efficiency</h3>
+            <p class="feature-text">
+              Track active vs waiting time so you can cut dead hours and stack the best orders across apps.
+            </p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">🚗</div>
+            <h3 class="feature-title">Vehicle‑aware insights</h3>
+            <p class="feature-text">
+              Factor in gas, maintenance, and miles so you see true profit—not just what the apps deposit.
+            </p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">📱</div>
+            <h3 class="feature-title">Built for real drivers</h3>
+            <p class="feature-text">
+              Designed around how drivers actually work: quick glances between orders, not complex spreadsheets.
+            </p>
+          </article>
+          <article class="feature">
+            <div class="feature-icon">🧠</div>
+            <h3 class="feature-title">Smart recommendations</h3>
+            <p class="feature-text">
+              Simple, actionable suggestions: “Shift this block later,” “Avoid this zone,” “This app is carrying your week.”
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS -->
+      <section id="how-it-works">
+        <div class="section-kicker">How it works</div>
+        <h2 class="section-title">From chaos to clarity in three steps.</h2>
+        <p class="section-sub">
+          RadarMyDrive doesn’t try to control your driving—it gives you the data you wish the apps showed you in the first place.
+        </p>
+
+        <div class="two-col">
+          <div class="card">
+            <h3 class="card-title">1 · Connect your driving</h3>
+            <p class="card-text">
+              Start with the apps you already use—DoorDash, Uber, Instacart, and more. You can also log shifts manually if you prefer.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Multi‑app friendly</span>
+              <span class="pill">Manual or automatic logging</span>
+              <span class="pill">No complex setup</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="card-title">2 · Drive like normal</h3>
+            <p class="card-text">
+              Keep working your usual zones and hours. Radar quietly tracks earnings, miles, and time in the background.
+            </p>
+            <div class="pill-row">
+              <span class="pill">No new habits required</span>
+              <span class="pill">Works with your style</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 class="card-title">3 · Adjust with confidence</h3>
+          <p class="card-text">
+            After a few days, patterns emerge: which zones are dead, which hours are gold, which app is dragging you down.
+            Radar turns that into simple decisions you can act on tonight.
+          </p>
+          <div class="pill-row">
+            <span class="pill">“Shift this block later”</span>
+            <span class="pill">“Avoid this zone on weekdays”</span>
+            <span class="pill">“This app is carrying your week”</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICING -->
+      <section id="pricing">
+        <div class="section-kicker">Pricing</div>
+        <h2 class="section-title">Built to pay for itself in one shift.</h2>
+        <p class="section-sub">
+          RadarMyDrive is designed so that a single optimized night of driving can cover the entire month.
+        </p>
+
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-label">Launch drivers</div>
+            <div class="price-main">$0 <span>/ month</span></div>
+            <div class="price-note">Limited early access · No credit card required.</div>
+            <ul class="price-list">
+              <li>Core earnings dashboard</li>
+              <li>Basic zone insights</li>
+              <li>Daily and weekly summaries</li>
+            </ul>
+            <button class="btn-outline" style="margin-top:8px;">Join the waitlist</button>
+          </div>
+
+          <div class="price-card" style="border-color:rgba(129,140,248,0.9); box-shadow:0 0 0 1px rgba(129,140,248,0.4);">
+            <div class="price-label">Pro driver</div>
+            <div class="price-main">$19 <span>/ month</span></div>
+            <div class="price-note">For drivers who treat this like a business.</div>
+            <ul class="price-list">
+              <li>Full earnings + profit analytics</li>
+              <li>Zone and time‑block performance</li>
+              <li>Vehicle cost and mileage tracking</li>
+              <li>Smart recommendations and alerts</li>
+            </ul>
+            <button class="btn" style="margin-top:8px;">Reserve Pro spot</button>
+          </div>
+
+          <div class="price-card">
+            <div class="price-label">Teams & fleets</div>
+            <div class="price-main">Let’s talk</div>
+            <div class="price-note">For small fleets, coaching, or multi‑driver setups.</div>
+            <ul class="price-list">
+              <li>Multi‑driver analytics</li>
+              <li>Shared insights and reporting</li>
+              <li>Custom onboarding and support</li>
+            </ul>
+            <button class="btn-outline" style="margin-top:8px;">Contact us</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq">
+        <div class="section-kicker">FAQ</div>
+        <h2 class="section-title">Questions drivers actually ask.</h2>
+        <p class="section-sub">
+          RadarMyDrive is built from real driver experience—not from a whiteboard. Here’s what most people want to know first.
+        </p>
+
+        <div class="faq-grid">
+          <div class="faq-item">
+            <div class="faq-q">Is the app actually ready?</div>
+            <div class="faq-a">
+              Yes. The app is ready to go—we’re onboarding the first wave of drivers and tightening the experience with real‑world use before opening it wider.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Do I have to change how I drive?</div>
+            <div class="faq-a">
+              No. You keep choosing your own apps, zones, and hours. Radar just shows you which of those choices are paying off and which ones are quietly costing you.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">What if I only drive part‑time?</div>
+            <div class="faq-a">
+              That’s fine. In some ways, part‑time drivers benefit the most—because you can’t afford to waste the few hours you do drive.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Can I stop anytime?</div>
+            <div class="faq-a">
+              Yes. No long‑term contracts, no weird lock‑in. If Radar isn’t making your driving clearer and more profitable, it’s not doing its job.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section>
+        <div class="cta">
+          <div class="cta-title">This app is ready to go. Are you?</div>
+          <div class="cta-sub">
+            If you’re tired of guessing whether a shift was worth it, RadarMyDrive is your next move.
+          </div>
+          <div class="cta-row">
+            <button class="btn">Get on the early access list</button>
+            <button class="btn-outline">See a sample day in Radar</button>
+          </div>
+          <div class="cta-footnote">
+            No pressure, no hype—just clear numbers about the work you’re already doing.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> RadarMyDrive. All rights reserved.</div>
+      <div>
+        <a href="#features">Features</a> ·
+        <a href="#pricing">Pricing</a> ·
+        <a href="#faq">FAQ</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
